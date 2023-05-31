@@ -1,4 +1,4 @@
-##🎥 Discord Video Compressor 🎥
+#🎥 Discord Video Compressor 🎥
 
 
 ##🚧 Work in Progress 🚧
