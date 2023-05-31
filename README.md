@@ -27,10 +27,6 @@ To use the Discord Video Compressor, download the latest release .exe file from 
 
 Contributions to this project are welcome. Feel free to submit bug reports, feature requests, or pull requests on the GitHub repository.
 
-📜 License 📜
-
-This project is licensed under the MIT License. See the LICENSE file for more information.
-
 👨‍💻 Author 👨‍💻
 
 This application is developed and maintained by Gerasimos Kanellatos. GitHub: https://github.com/GerasimosKan.
