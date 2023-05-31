@@ -4,10 +4,10 @@ This is a video compressor application that allows you to compress video files f
 
 🔧 Features 🔧
 
-📥 Drag and drop a video file to compress it.
-📊 Progress bar to track compression progress.
-❌ Cancel button to stop the compression process.
-🔄 Automatic update check to ensure you have the latest version.
+📥 Drag and drop a video file to compress it. <br>
+📊 Progress bar to track compression progress. <br>
+❌ Cancel button to stop the compression process. <br>
+🔄 Automatic update check to ensure you have the latest version. <br>
 
 🚀 Usage 🚀
 
