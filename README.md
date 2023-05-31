@@ -33,4 +33,4 @@ This project is licensed under the MIT License. See the LICENSE file for more in
 
 👨‍💻 Author 👨‍💻
 
-This application is developed and maintained by Gerasimos Kanatas. GitHub: https://github.com/GerasimosKan.
+This application is developed and maintained by Gerasimos Kanellatos. GitHub: https://github.com/GerasimosKan.
