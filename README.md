@@ -1,6 +1,6 @@
 🎥 Discord Video Compressor 🎥
 
-This is a video compressor application that allows you to compress video files for use on Discord. It is built using Python and PyQt5.
+This is a video compressor application that allows you to compress video files for use on Discord. It is built using Python, PyQt5 and FFmpeg
 
 🔧 Features 🔧
 
