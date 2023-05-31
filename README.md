@@ -1,5 +1,12 @@
 🎥 Discord Video Compressor 🎥
 
+
+🚧 Work in Progress 🚧
+
+This project is currently a work in progress. It is not yet ready for production use. Contributions and feedback are welcome!
+
+
+## Description
 This is a video compressor application that allows you to compress video files for use on Discord. It is built using Python, PyQt5 and FFmpeg
 
 🔧 Features 🔧
