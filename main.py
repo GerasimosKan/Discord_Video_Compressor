@@ -21,8 +21,11 @@ preset_params = {
     "VideoPreset": "medium",
 }
 
-MAX_SIZE_MB = 10
+MAX_SIZE_MB = 9.5
 BYTES_PER_MB = 1024 * 1024
+APP_VERSION = "1.0.0"  # Set your application version here
+
+compression_process = None  # Global variable to manage FFmpeg process
 
 
 def get_ffmpeg_path():
@@ -94,8 +97,11 @@ def check_gpu_support():
         return False
 
 
-def compress_video(video_path, save_path, result_label, progress_bar):
+def compress_video(
+    video_path, save_path, result_label, progress_bar, estimated_time_label
+):
     """Compress the video using ffmpeg and update the UI."""
+    global compression_process
     duration = get_video_duration(video_path)
     if duration is None:
         result_label.config(text="Failed to get video duration.")
@@ -133,7 +139,7 @@ def compress_video(video_path, save_path, result_label, progress_bar):
     print("FFmpeg command:", " ".join(command))  # Log the command for debugging
 
     # Use subprocess to run FFmpeg without opening a window
-    process = subprocess.Popen(
+    compression_process = subprocess.Popen(
         command,
         stderr=subprocess.PIPE,
         stdout=subprocess.PIPE,
@@ -141,8 +147,8 @@ def compress_video(video_path, save_path, result_label, progress_bar):
         creationflags=subprocess.CREATE_NO_WINDOW,  # Hide the window on Windows
     )
 
-    # Update the progress bar based on ffmpeg output
-    for line in process.stderr:
+    # Update the progress bar and estimated time based on ffmpeg output
+    for line in compression_process.stderr:
         print(line)  # Log the FFmpeg output line
         if "time=" in line:
             time_match = re.search(r"time=(\d+):(\d+):(\d+.\d+)", line)
@@ -153,8 +159,14 @@ def compress_video(video_path, save_path, result_label, progress_bar):
                 progress_bar["value"] = progress
                 progress_bar.update()
 
-    process.wait()
-    if process.returncode == 0:
+                # Update the estimated render time
+                remaining_seconds = duration_seconds - elapsed_seconds
+                estimated_time_label.config(
+                    text=f"Estimated time remaining: {remaining_seconds:.2f} seconds"
+                )
+
+    compression_process.wait()
+    if compression_process.returncode == 0:
         result_label.config(
             text=f"Video successfully compressed and saved to: {save_path}"
         )
@@ -163,11 +175,13 @@ def compress_video(video_path, save_path, result_label, progress_bar):
             text="Error during compression. Please check the console for details."
         )
         print(
-            "Error during compression:", process.stderr.read()
+            "Error during compression:", compression_process.stderr.read()
         )  # Log the error output
 
 
-def handle_video_compression(video_path, result_label, progress_bar):
+def handle_video_compression(
+    video_path, result_label, progress_bar, estimated_time_label
+):
     """Handle the compression workflow."""
     if not os.path.isfile(video_path):
         result_label.config(text="Invalid file. Please provide a valid video file.")
@@ -180,38 +194,57 @@ def handle_video_compression(video_path, result_label, progress_bar):
 
     result_label.config(text=f"Processing: {video_path}")
     progress_bar["value"] = 0
+    estimated_time_label.config(text="Estimated time remaining: Calculating...")
     threading.Thread(
-        target=compress_video, args=(video_path, save_path, result_label, progress_bar)
+        target=compress_video,
+        args=(video_path, save_path, result_label, progress_bar, estimated_time_label),
     ).start()
 
 
-def on_drop(event, result_label, progress_bar):
-    handle_video_compression(event.data, result_label, progress_bar)
+def cancel_render():
+    """Cancel the ongoing compression process."""
+    global compression_process
+    if compression_process:
+        compression_process.terminate()
+        compression_process = None
 
 
-def browse_file(result_label, progress_bar):
+def on_drop(event, result_label, progress_bar, estimated_time_label):
+    handle_video_compression(
+        event.data, result_label, progress_bar, estimated_time_label
+    )
+
+
+def browse_file(result_label, progress_bar, estimated_time_label):
     video_path = filedialog.askopenfilename(
         filetypes=[("Video files", "*.mp4 *.mov *.avi *.mkv")],
         title="Select a Video File",
     )
     if video_path:
-        handle_video_compression(video_path, result_label, progress_bar)
+        handle_video_compression(
+            video_path, result_label, progress_bar, estimated_time_label
+        )
 
 
-def open_browse(event, result_label, progress_bar):
-    browse_file(result_label, progress_bar)
+def open_browse(event, result_label, progress_bar, estimated_time_label):
+    browse_file(result_label, progress_bar, estimated_time_label)
 
 
 def setup_ui():
     """Setup the main UI for the application."""
     root = TkinterDnD.Tk()
-    root.title("Video Compressor")
-    root.geometry("500x300")
+    root.title("Discord Video Compressor")
+    root.geometry("500x350")  # Fixed window size
     root.configure(bg="#f0f0f0")
 
-    tk.Label(root, text="Video Compressor", font=("Arial", 16), bg="#f0f0f0").pack(
-        pady=(10, 5)
+    tk.Label(
+        root, text="Discord Video Compressor", font=("Arial", 16), bg="#f0f0f0"
+    ).pack(pady=(10, 5))
+
+    version_label = tk.Label(
+        root, text=f"Version: {APP_VERSION}", bg="#f0f0f0", font=("Arial", 10)
     )
+    version_label.pack(pady=(0, 5))
 
     instruction_label = tk.Label(
         root,
@@ -226,7 +259,10 @@ def setup_ui():
     instruction_label.pack(padx=10, pady=(0, 10))
 
     instruction_label.bind(
-        "<Button-1>", lambda event: open_browse(event, result_label, progress_bar)
+        "<Button-1>",
+        lambda event: open_browse(
+            event, result_label, progress_bar, estimated_time_label
+        ),
     )
 
     progress_bar = ttk.Progressbar(
@@ -234,12 +270,21 @@ def setup_ui():
     )
     progress_bar.pack(pady=(0, 10))
 
+    estimated_time_label = tk.Label(
+        root, text="Estimated time remaining: ", bg="#f0f0f0", font=("Arial", 10)
+    )
+    estimated_time_label.pack(pady=(0, 5))
+
     result_label = tk.Label(root, text="", bg="#f0f0f0", font=("Arial", 10))
     result_label.pack(pady=(10, 0))
 
+    cancel_button = tk.Button(root, text="Cancel Render", command=cancel_render)
+    cancel_button.pack(pady=(10, 0))
+
     instruction_label.drop_target_register(DND_FILES)
     instruction_label.dnd_bind(
-        "<<Drop>>", lambda event: on_drop(event, result_label, progress_bar)
+        "<<Drop>>",
+        lambda event: on_drop(event, result_label, progress_bar, estimated_time_label),
     )
 
     root.mainloop()
