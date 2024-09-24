@@ -18,8 +18,12 @@
    "value": false
   },
   {
+   "optionDest": "icon_file",
+   "value": "C:/Users/Gerasimos/Documents/GitHub/Discord_Video_Compressor/img/Untitled-1.ico"
+  },
+  {
    "optionDest": "name",
-   "value": "Discord Video Compressor V1"
+   "value": "Discord VideoCompressor"
   },
   {
    "optionDest": "clean_build",
