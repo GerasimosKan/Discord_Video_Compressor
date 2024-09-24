@@ -7,13 +7,16 @@ This project is currently a work in progress. It is not yet ready for production
 
 
 ## Description
-This is a video compressor application that allows you to compress video files for use on Discord. It is built using Python, PyQt5 and FFmpeg
+This video compressor application, built with Python, Tkinter, and FFmpeg, allows you to compress video files for use on Discord. It uses the H.265 (HEVC) codec and automatically detects GPU acceleration if available, or defaults to CPU-based compression. The tool features drag-and-drop functionality, customizable settings, and real-time progress updates, making video compression fast and user-friendly.
 
 🔧 Features 🔧
 
 📥 Drag and drop a video file to compress it. <br>
 📊 Progress bar to track compression progress. <br>
 ❌ Cancel button to stop the compression process. <br>
+
+📑 Roadmap 📑
+
 🔄 Automatic update check to ensure you have the latest version. <br>
 
 🚀 Usage 🚀
