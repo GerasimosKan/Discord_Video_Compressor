@@ -21,7 +21,7 @@ preset_params = {
     "VideoPreset": "medium",
 }
 
-MAX_SIZE_MB = 9.5
+MAX_SIZE_MB = 8.5
 BYTES_PER_MB = 1024 * 1024
 APP_VERSION = "1.0.0"  # Set your application version here
 
@@ -235,6 +235,7 @@ def setup_ui():
     root = TkinterDnD.Tk()
     root.title("Discord Video Compressor")
     root.geometry("500x350")  # Fixed window size
+    root.iconbitmap("logo.ico")
     root.configure(bg="#f0f0f0")
 
     tk.Label(
